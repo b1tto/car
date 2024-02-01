@@ -1,0 +1,71 @@
+<html>
+    <head>
+
+        <title>Object Detection</title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+      <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+    
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.0.0/p5.js"></script>
+    
+      <script src="https://unpkg.com/ml5@latest/dist/ml5.min.js"></script>
+      
+      <link rel="stylesheet" type="text/css" href="style.css">
+    </head>
+<body background="bedroom.jpg">
+    <center>
+        <h1 class="btn-warning">Bedroom</h1>
+        <a href="index.html" class="btn btn-success">go back</a>
+        <br>
+        <br>
+        <h3 id="status" class="btn-info"></h3>
+        <br>
+        <br>
+        <h3 id="objdetc" class="btn btn-primary">objects detected are : </h3>
+</center>
+<script>
+    objectdetector = "";
+    img = "";
+    objects = [];
+    status = "";
+
+    function preload(){
+        img = loadImage("bedroom.jpg");
+    }
+    
+    function setup(){
+        canvas = createCanvas(500, 500);
+        canvas.center();
+        objectdetector = ml5.objectDetector('cocossd', modelloaded);
+        document.getElementById("status").innerHTML = "status : detecting objects";
+    }
+    function modelloaded(){
+        console.log("modelloaded", modelloaded);
+        status = true;
+        objectdetector.detect(img, gotResult);
+    }
+    function gotResult(error, results){
+        if(error){
+            console.log(error);
+        }
+        console.log(results);
+        objects = results;
+    }
+    function draw(){
+        if(status != undefined){
+            image(img, 0, 0, 500, 500);
+            for(var i = 0; i < objects.length; i++){
+                document.getElementById("status").innerHTML = "status : objects detected";
+                fill(255, 0, 0);
+                percent = floor(objects[i].confidence*100);
+                text(objects[i].label+" "+percent+"%",objects[i].x, objects[i].y);
+                noFill();
+                stroke(255, 0, 0);
+                rect(objects[i].x, objects[i].y, objects[i].width, objects[i].height);
+            }
+        }
+    }
+</script>
+</body>
+</html>
